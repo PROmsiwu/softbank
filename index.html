@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOFT BANK - بنك الترفيه</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+  :root {
+    --gold: #FFD700;
+    --gold2: #FFA500;
+    --dark: #0a0a0f;
+    --dark2: #12121a;
+    --dark3: #1a1a2e;
+    --card: #16213e;
+    --card2: #0f3460;
+    --green: #00e676;
+    --red: #ff1744;
+    --blue: #00b0ff;
+    --purple: #7c4dff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--dark);
+    color: #fff;
+    min-height: 100vh;
+  }
+
+  /* ===== AUTH SCREEN ===== */
+  #authScreen {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+  }
+
+  .auth-box {
+    background: var(--card);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 340px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(255,215,0,0.3);
+  }
+
+  .auth-logo {
+    font-size: 48px; margin-bottom: 10px;
+  }
+
+  .auth-box h2 {
+    color: var(--gold);
+    font-size: 22px;
+    margin-bottom: 25px;
+  }
+
+  .auth-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #333;
+  }
+
+  .auth-tab {
+    flex: 1; padding: 10px;
+    background: #1a1a2e;
+    border: none; color: #aaa;
+    cursor: pointer; font-family: 'Cairo', sans-serif;
+    font-size: 14px; transition: all 0.3s;
+  }
+
+  .auth-tab.active {
+    background: var(--gold);
+    color: #000; font-weight: 700;
+  }
+
+  .auth-input {
+    width: 100%;
+    background: #1a1a2e;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 12px 15px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .auth-input:focus { border-color: var(--gold); }
+
+  .auth-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    border: none; border-radius: 10px;
+    padding: 13px;
+    color: #000; font-weight: 900;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px; cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .auth-btn:hover { transform: scale(1.02); }
+
+  .auth-msg {
+    margin-top: 12px; font-size: 13px;
+    min-height: 20px;
+  }
+
+  /* ===== MAIN APP ===== */
+  #app { display: none; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--dark3), var(--card2));
+    border-bottom: 2px solid var(--gold);
+    padding: 15px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .header-logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .header-logo span:first-child { font-size: 28px; }
+
+  .header-logo .brand {
+    font-size: 18px; font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(255,215,0,0.5);
+  }
+
+  .header-balance {
+    background: rgba(255,215,0,0.1);
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 8px 15px;
+    text-align: center;
+  }
+
+  .balance-label { font-size: 11px; color: #aaa; }
+  .balance-amount {
+    font-size: 18px; font-weight: 900;
+    color: var(--gold);
+  }
+
+  .header-user {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: #ccc;
+    flex-wrap: wrap;
+  }
+
+  .logout-btn {
+    background: rgba(255,23,68,0.2);
+    border: 1px solid var(--red);
+    color: var(--red);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer; font-size: 12px;
+    font-family: 'Cairo', sans-serif;
+  }
+
+  /* NAV */
+  .nav {
+    display: flex; gap: 8px;
+    padding: 12px 15px;
+    overflow-x: auto;
+    background: var(--dark2);
+    border-bottom: 1px solid #1a1a2e;
+  }
+
+  .nav::-webkit-scrollbar { height: 3px; }
+  .nav::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+  .nav-btn {
+    background: var(--card);
+    border: 1px solid #333;
+    color: #aaa;
+    border-radius: 25px;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: all 0.3s;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .nav-btn.active, .nav-btn:hover {
+    background: var(--gold);
+    color: #000; font-weight: 700;
+    border-color: var(--gold);
+  }
+
+  /* PAGES */
+  .page { display: none; padding: 15px; }
+  .page.active { display: block; }
+
+  /* HOME PAGE */
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--card2), var(--dark3));
+    border: 1px solid var(--gold);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+
+  .welcome-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .welcome-banner h1 { font-size: 22px; color: var(--gold); }
+  .welcome-banner p { color: #ccc; margin-top: 5px; font-size: 14px; }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .game-card {
+    background: var(--card);
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 18px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative; overflow: hidden;
+  }
+
+  .game-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0; transition: opacity 0.3s;
+  }
+
+  .game-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--gold);
+    box-shadow: 0 8px 25px rgba(255,215,0,0.2);
+  }
+
+  .game-card .icon { font-size: 40px; margin-bottom: 8px; }
+  .game-card .name { font-size: 15px; font-weight: 700; color: #fff; }
+  .game-card .desc { font-size: 11px; color: #888; margin-top: 4px; }
+
+  /* GAME PAGES */
+  .game-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .back-btn {
+    background: var(--card);
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 10px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+  }
+
+  .game-title { font-size: 20px; font-weight: 900; color: var(--gold); }
+
+  .bet-section {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .bet-label {
+    font-size: 13px; color: #aaa; margin-bottom: 8px;
+  }
+
+  .bet-input-row {
+    display: flex; gap: 10px; align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .bet-input {
+    flex: 1;
+    background: var(--dark3);
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 10px 15px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px; font-weight: 700;
+    outline: none;
+    min-width: 80px;
+  }
+
+  .bet-input:focus { border-color: var(--gold); }
+
+  .quick-bets {
+    display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;
+  }
+
+  .quick-bet {
+    background: var(--dark3);
+    border: 1px solid #333;
+    color: #aaa;
+    border-radius: 8px;
+    padding: 5px 12px;
+    cursor: pointer; font-size: 12px;
+    font-family: 'Cairo', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .quick-bet:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+
+  .play-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    border: none; border-radius: 12px;
+    padding: 15px;
+    color: #000; font-weight: 900;
+    font-family: 'Cairo', sans-serif;
+    font-size: 18px; cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 12px;
+  }
+
+  .play-btn:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
+  .play-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .result-box {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 15px;
+    display: none;
+  }
+
+  .result-win { border: 2px solid var(--green); }
+  .result-lose { border: 2px solid var(--red); }
+
+  .result-title { font-size: 22px; font-weight: 900; }
+  .win-text { color: var(--green); }
+  .lose-text { color: var(--red); }
+  .result-amount { font-size: 28px; font-weight: 900; margin-top: 5px; }
+
+  /* ===== DICE GAME ===== */
+  .dice-arena {
+    background: linear-gradient(135deg, #1a1a3e, #0f3460);
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .dice-vs {
+    display: flex; align-items: center; justify-content: center; gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .dice-player {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 15px 20px;
+    min-width: 100px;
+  }
+
+  .dice-player .p-name { font-size: 13px; color: #aaa; }
+  .dice-player .p-dice { font-size: 50px; margin: 10px 0; }
+  .dice-player .p-num { font-size: 28px; font-weight: 900; }
+
+  .vs-text { font-size: 22px; font-weight: 900; color: var(--gold); }
+
+  .dice-choices {
+    display: flex; gap: 10px; justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .choice-btn {
+    background: var(--dark3);
+    border: 2px solid #333;
+    color: #fff;
+    border-radius: 12px;
+    padding: 12px 25px;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px; font-weight: 700;
+    transition: all 0.3s;
+  }
+
+  .choice-btn.selected { border-color: var(--gold); background: rgba(255,215,0,0.15); color: var(--gold); }
+
+  /* ===== MINES GAME ===== */
+  .mines-header-info {
+    display: flex; justify-content: space-between;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mines-stat { text-align: center; flex: 1; min-width: 60px; }
+  .mines-stat .ms-label { font-size: 11px; color: #888; }
+  .mines-stat .ms-val { font-size: 18px; font-weight: 900; color: var(--gold); }
+
+  .mines-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 15px;
+  }
+
+  .mine-cell {
+    aspect-ratio: 1;
+    background: var(--card2);
+    border: 2px solid #333;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .mine-cell:hover:not(.revealed) {
+    border-color: var(--gold);
+    background: rgba(255,215,0,0.1);
+    transform: scale(1.05);
+  }
+
+  .mine-cell.revealed { cursor: default; }
+  .mine-cell.safe { background: rgba(0,230,118,0.15); border-color: var(--green); }
+  .mine-cell.bomb { background: rgba(255,23,68,0.2); border-color: var(--red); animation: shake 0.3s; }
+  .mine-cell.hint { background: rgba(255,215,0,0.1); border-color: var(--gold); }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .mines-controls { display: flex; gap: 10px; }
+
+  .cashout-btn {
+    flex: 1;
+    background: linear-gradient(135deg, var(--green), #00c853);
+    border: none; border-radius: 12px;
+    padding: 14px;
+    color: #000; font-weight: 900;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px; cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .cashout-btn:hover { transform: scale(1.02); }
+  .cashout-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ===== TRADING GAME ===== */
+  .chart-container {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 15px;
+    margin-bottom: 15px;
+    height: 200px;
+    position: relative; overflow: hidden;
+  }
+
+  .chart-canvas { width: 100%; height: 100%; }
+
+  .trade-price {
+    text-align: center; margin-bottom: 10px;
+    font-size: 28px; font-weight: 900;
+  }
+
+  .trade-btns { display: flex; gap: 10px; }
+
+  .trade-up {
+    flex: 1;
+    background: linear-gradient(135deg, var(--green), #00c853);
+    border: none; border-radius: 12px;
+    padding: 15px;
+    color: #000; font-weight: 900;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px; cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .trade-down {
+    flex: 1;
+    background: linear-gradient(135deg, var(--red), #d50000);
+    border: none; border-radius: 12px;
+    padding: 15px;
+    color: #fff; font-weight: 900;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px; cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .trade-up:hover, .trade-down:hover { transform: scale(1.02); }
+  .trade-up:disabled, .trade-down:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ===== APPLE GAME ===== */
+  .apple-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .apple-cell {
+    aspect-ratio: 1;
+    background: var(--card2);
+    border: 2px solid #333;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    transition: all 0.25s;
+    user-select: none;
+  }
+
+  .apple-cell:hover:not(.revealed) {
+    border-color: var(--green);
+    background: rgba(0,230,118,0.1);
+    transform: scale(1.05);
+  }
+
+  .apple-cell.apple { background: rgba(0,230,118,0.15); border-color: var(--green); }
+  .apple-cell.bomb-a { background: rgba(255,23,68,0.2); border-color: var(--red); animation: shake 0.3s; }
+  .apple-cell.empty { background: rgba(255,255,255,0.05); border-color: #444; }
+
+  .apple-info {
+    display: flex; justify-content: space-between;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ===== LEADERBOARD ===== */
+  .lb-card {
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 15px;
+  }
+
+  .lb-header {
+    background: linear-gradient(135deg, var(--card2), var(--dark3));
+    padding: 15px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid #333;
+  }
+
+  .lb-header h3 { font-size: 16px; color: var(--gold); }
+
+  .lb-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 15px;
+    border-bottom: 1px solid #1a1a2e;
+    transition: background 0.2s;
+  }
+
+  .lb-row:hover { background: rgba(255,255,255,0.03); }
+  .lb-row:last-child { border-bottom: none; }
+
+  .lb-rank {
+    font-size: 18px; font-weight: 900;
+    width: 30px; text-align: center;
+  }
+
+  .lb-name { flex: 1; font-size: 14px; font-weight: 600; }
+  .lb-bal { font-size: 15px; font-weight: 900; color: var(--gold); }
+
+  /* ===== PROFILE ===== */
+  .profile-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 15px;
+    border: 1px solid #333;
+  }
+
+  .profile-avatar {
+    font-size: 60px; margin-bottom: 10px;
+  }
+
+  .profile-name { font-size: 22px; font-weight: 900; color: var(--gold); }
+  .profile-balance { font-size: 30px; font-weight: 900; color: var(--green); margin-top: 8px; }
+
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+  }
+
+  .stat-card .s-icon { font-size: 24px; }
+  .stat-card .s-val { font-size: 20px; font-weight: 900; color: var(--gold); margin: 5px 0; }
+  .stat-card .s-label { font-size: 12px; color: #888; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 80px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--card);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 12px 25px;
+    font-size: 14px; font-weight: 700;
+    z-index: 999;
+    opacity: 0; pointer-events: none;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1; transform: translateX(-50%) translateY(0);
+  }
+
+  /* LOADING */
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid #333;
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 20px auto;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* CHICKEN ROAD */
+  .chicken-road {
+    background: linear-gradient(135deg, #1a1a3e, #0f1a3e);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .road-cells {
+    display: flex; gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .road-cell {
+    min-width: 55px; height: 65px;
+    background: var(--card2);
+    border: 2px solid #333;
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-size: 12px; color: #aaa;
+  }
+
+  .road-cell .mult { font-size: 10px; color: #888; }
+
+  .road-cell:hover:not(.passed):not(.current) {
+    border-color: var(--gold);
+    transform: scale(1.05);
+  }
+
+  .road-cell.current { border-color: var(--gold); background: rgba(255,215,0,0.15); }
+  .road-cell.passed.safe { background: rgba(0,230,118,0.15); border-color: var(--green); }
+  .road-cell.passed.bomb { background: rgba(255,23,68,0.2); border-color: var(--red); }
+
+  .chicken-display {
+    font-size: 35px;
+    transition: transform 0.3s;
+  }
+
+  /* NO BALANCE */
+  .no-balance {
+    text-align: center; padding: 30px 15px;
+    color: #888;
+  }
+
+  .no-balance .icon { font-size: 50px; margin-bottom: 10px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .games-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .mines-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+    .apple-grid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+    .header { flex-direction: column; align-items: stretch; text-align: center; }
+    .header-user { justify-content: center; }
+    .header-balance { align-self: center; }
+    .dice-vs { flex-direction: row; gap: 10px; }
+    .dice-player { min-width: 70px; padding: 10px; }
+    .dice-player .p-dice { font-size: 35px; }
+    .dice-player .p-num { font-size: 20px; }
+    .vs-text { font-size: 16px; }
+  }
+
+  @media (max-width: 400px) {
+    .games-grid { grid-template-columns: 1fr; }
+    .mines-grid { grid-template-columns: repeat(5, 1fr); gap: 3px; }
+    .mine-cell { font-size: 16px; }
+    .apple-grid { grid-template-columns: repeat(4, 1fr); gap: 3px; }
+    .apple-cell { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo">🏦</div>
+    <h2>SOFT BANK</h2>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">دخول</button>
+      <button class="auth-tab" onclick="switchTab('register')">تسجيل</button>
+    </div>
+
+    <div id="loginForm">
+      <input class="auth-input" id="loginUser" placeholder="اسم المستخدم" />
+      <input class="auth-input" id="loginPass" type="password" placeholder="كلمة المرور" />
+      <button class="auth-btn" onclick="login()">🚀 دخول</button>
+    </div>
+
+    <div id="registerForm" style="display:none">
+      <input class="auth-input" id="regUser" placeholder="اسم المستخدم" />
+      <input class="auth-input" id="regPass" type="password" placeholder="كلمة المرور" />
+      <button class="auth-btn" onclick="register()">✨ إنشاء حساب</button>
+    </div>
+
+    <div id="authMsg" class="auth-msg"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="header">
+    <div class="header-logo">
+      <span>🏦</span>
+      <span class="brand">SOFT BANK</span>
+    </div>
+    <div class="header-balance">
+      <div class="balance-label">رصيدك</div>
+      <div class="balance-amount" id="headerBalance">$0</div>
+    </div>
+    <div class="header-user">
+      <span id="headerUsername"></span>
+      <button class="logout-btn" onclick="logout()">خروج</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showPage('home')">🏠 الرئيسية</button>
+    <button class="nav-btn" onclick="showPage('dice')">🎲 النرد</button>
+    <button class="nav-btn" onclick="showPage('mines')">💣 الألغام</button>
+    <button class="nav-btn" onclick="showPage('chicken')">🐔 الدجاجة</button>
+    <button class="nav-btn" onclick="showPage('diamond')">💎 الماس</button>
+    <button class="nav-btn" onclick="showPage('trade')">📈 التداول</button>
+    <button class="nav-btn" onclick="showPage('apple')">🍎 التفاحة</button>
+    <button class="nav-btn" onclick="showPage('leaderboard')">🏆 المتصدرين</button>
+    <button class="nav-btn" onclick="showPage('profile')">👤 حسابي</button>
+  </div>
+
+  <!-- HOME -->
+  <div id="page-home" class="page active">
+    <div class="welcome-banner">
+      <h1>🎰 أهلاً بك في SOFT BANK</h1>
+      <p>العب الألعاب واربح الفلوس الوهمية!</p>
+    </div>
+    <div class="games-grid">
+      <div class="game-card" onclick="showPage('dice')">
+        <div class="icon">🎲</div>
+        <div class="name">لعبة النرد</div>
+        <div class="desc">انت ضد البوت</div>
+      </div>
+      <div class="game-card" onclick="showPage('mines')">
+        <div class="icon">💣</div>
+        <div class="name">الألغام</div>
+        <div class="desc">اكشف الأمان وتجنب القنابل</div>
+      </div>
+      <div class="game-card" onclick="showPage('chicken')">
+        <div class="icon">🐔</div>
+        <div class="name">طريق الدجاجة</div>
+        <div class="desc">تقدم وأجمع المضاعفات</div>
+      </div>
+      <div class="game-card" onclick="showPage('diamond')">
+        <div class="icon">💎</div>
+        <div class="name">لعبة الماس</div>
+        <div class="desc">اكشف الماس واكسب</div>
+      </div>
+      <div class="game-card" onclick="showPage('trade')">
+        <div class="icon">📈</div>
+        <div class="name">التداول</div>
+        <div class="desc">توقع السوق واربح</div>
+      </div>
+      <div class="game-card" onclick="showPage('apple')">
+        <div class="icon">🍎</div>
+        <div class="name">التفاحة</div>
+        <div class="desc">اجمع التفاح وتجنب القنابل</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DICE GAME -->
+  <div id="page-dice" class="page">
+    <div class="game-header">
+      <button class="back-btn" onclick="showPage('home')">← رجوع</button>
+      <span class="game-title">🎲 لعبة النرد</span>
+    </div>
+
+    <div class="dice-arena">
+      <div class="dice-vs">
+        <div class="dice-player">
+          <div class="p-name" id="dicePlayerName">أنت</div>
+          <div class="p-dice" id="diceP1">🎲</div>
+          <div class="p-num" id="diceP1Num">-</div>
+        </div>
+        <div class="vs-text">VS</div>
+        <div class="dice-player">
+          <div class="p-name">البوت 🤖</div>
+          <div class="p-dice" id="diceP2">🎲</div>
+          <div class="p-num" id="diceP2Num">-</div>
+        </div>
+      </div>
+      <div id="diceStatus" style="color:#aaa;font-size:14px">اضغط العب للبدء</div>
+    </div>
+
+    <div class="bet-section">
+      <div class="bet-label">مبلغ الرهان</div>
+      <div class="bet-input-row">
+        <input class="bet-input" type="number" id="diceBet" value="100" min="1" />
+      </div>
+      <div class="quick-bets">
+        <button class="quick-bet" onclick="setBet('dice',100)">$100</button>
+        <button class="quick-bet" onclick="setBet('dice',500)">$500</button>
+        <button class="quick-bet" onclick="setBet('dice',1000)">$1K</button>
+        <button class="quick-bet" onclick="setBet('dice',5000)">$5K</button>
+        <button class="quick-bet" onclick="setHalf('dice')">نص</button>
+        <button class="quick-bet" onclick="setAll('dice')">الكل</button>
+      </div>
+      <button class="play-btn" id="dicePlayBtn" onclick="playDice()">🎲 العب!</button>
+    </div>
+
+    <div id="diceResult" class="result-box">
+      <div id="diceResultTitle" class="result-title"></div>
+      <div id="diceResultAmt" class="result-amount"></div>
+    </div>
+  </div>
+
+  <!-- MINES GAME -->
+  <div id="page-mines" class="page">
+    <div class="game-header">
+      <button class="back-btn" onclick="showPage('home')">← رجوع</button>
+      <span class="game-title">💣 لعبة الألغام</span>
+    </div>
+
+    <div class="mines-header-info">
+      <div class="mines-stat">
+        <div class="ms-label">ربح محتمل</div>
+        <div class="ms-val" id="minesPotential">$0</div>
+      </div>
+      <div class="mines-stat">
+        <div class="ms-label">أمان مكشوف</div>
+        <div class="ms-val" id="minesSafe">0</div>
+      </div>
+      <div class="mines-stat">
+        <div class="ms-label">المضاعف</div>
+        <div class="ms-val" id="minesMulti">x1.0</div>
+      </div>
+    </div>
+
+    <div class="mines-grid" id="minesGrid"></div>
+
+    <div class="bet-section">
+      <div class="bet-label">مبلغ الرهان</div>
+      <div class="bet-input-row">
+        <input class="bet-input" type="number" id="minesBet" value="100" min="1" />
+        <select id="minesBombs" style="background:var(--dark3);border:1px solid #333;color:#fff;border-radius:10px;padding:10px;font-family:'Cairo',sans-serif;">
+          <option value="3">3 قنابل</option>
+          <option value="5" selected>5 قنابل</option>
+          <option value="8">8 قنابل</option>
+          <option value="12">12 قنبلة</option>
+        </select>
+      </div>
+      <div class="quick-bets">
+        <button class="quick-bet" onclick="setBet('mines',100)">$100</button>
+        <button class="quick-bet" onclick="setBet('mines',500)">$500</button>
+        <button class="quick-bet" onclick="setBet('mines',1000)">$1K</button>
+        <button class="quick-bet" onclick="setAll('mines')">الكل</button>
+      </div>
+      <button class="play-btn" id="minesStartBtn" onclick="startMines()">💣 إبدأ اللعب</button>
+    </div>
+
+    <div class="mines-controls">
+      <button class="cashout-btn" id="minesCashout" onclick="cashoutMines()" disabled>💰 سحب الأرباح</button>
+    </div>
+  </div>
+
+  <!-- CHICKEN ROAD -->
+  <div id="page-chicken" class="page">
+    <div class="game-header">
+      <button class="back-btn" onclick="showPage('home')">← رجوع</button>
+      <span class="game-title">🐔 طريق الدجاجة</span>
+    </div>
+
+    <div class="chicken-road">
+      <div style="text-align:center;margin-bottom:15px">
+        <div style="font-size:13px;color:#aaa">ربح محتمل</div>
+        <div style="font-size:28px;font-weight:900;color:var(--gold)" id="chickenPot">$0</div>
+      </div>
+      <div class="road-cells" id="chickenRoad"></div>
+    </div>
+
+    <div class="bet-section">
+      <div class="bet-label">مبلغ الرهان</div>
+      <div class="bet-input-row">
+        <input class="bet-input" type="number" id="chickenBet" value="100" min="1" />
+      </div>
+      <div class="quick-bets">
+        <button class="quick-bet" onclick="setBet('chicken',100)">$100</button>
+        <button class="quick-bet" onclick="setBet('chicken',500)">$500</button>
+        <button class="quick-bet" onclick="setBet('chicken',1000)">$1K</button>
+        <button class="quick-bet" onclick="setAll('chicken')">الكل</button>
+      </div>
+      <button class="play-btn" id="chickenStartBtn" onclick="startChicken()">🐔 إبدأ</button>
+    </div>
+
+    <div class="mines-controls">
+      <button class="cashout-btn" id="chickenCashout" onclick="cashoutChicken()" disabled>💰 سحب</button>
+    </div>
+  </div>
+
+  <!-- DIAMOND GAME -->
+  <div id="page-diamond" class="page">
+    <div class="game-header">
+      <button class="back-btn" onclick="showPage('home')">← رجوع</button>
+      <span class="game-title">💎 لعبة الماس</span>
+    </div>
+
+    <div class="mines-header-info">
+      <div class="mines-stat">
+        <div class="ms-label">ربح محتمل</div>
+        <div class="ms-val" id="diamondPot">$0</div>
+      </div>
+      <div class="mines-stat">
+        <div class="ms-label">ماس مكشوف</div>
+        <div class="ms-val" id="diamondFound">0</div>
+      </div>
+      <div class="mines-stat">
+        <div class="ms-label">المضاعف</div>
+        <div class="ms-val" id="diamondMulti">x1.0</div>
+      </div>
+    </div>
+
+    <div class="mines-grid" id="diamondGrid" style="grid-template-columns:repeat(5,1fr)"></div>
+
+    <div class="bet-section">
+      <div class="bet-label">مبلغ الرهان</div>
+      <input class="bet-input" type="number" id="diamondBet" value="100" min="1" />
+      <div class="quick-bets">
+        <button class="quick-bet" onclick="setBet('diamond',100)">$100</button>
+        <button class="quick-bet" onclick="setBet('diamond',500)">$500</button>
+        <button class="quick-bet" onclick="setBet('diamond',1000)">$1K</button>
+        <button class="quick-bet" onclick="setAll('diamond')">الكل</button>
+      </div>
+      <button class="play-btn" id="diamondStartBtn" onclick="startDiamond()">💎 إبدأ</button>
+    </div>
+
+    <div class="mines-controls">
+      <button class="cashout-btn" id="diamondCashout" onclick="cashoutDiamond()" disabled>💰 سحب</button>
+    </div>
+  </div>
+
+  <!-- TRADING -->
+  <div id="page-trade" class="page">
+    <div class="game-header">
+      <button class="back-btn" onclick="showPage('home')">← رجوع</button>
+      <span class="game-title">📈 التداول</span>
+    </div>
+
+    <div class="chart-container">
+      <canvas class="chart-canvas" id="tradeChart"></canvas>
+    </div>
+
+    <div class="trade-price">
+      <span id="tradePrice" style="color:var(--gold)">$0.00</span>
+      <span id="tradePriceChange" style="font-size:16px;margin-right:10px"></span>
+    </div>
+
+    <div class="bet-section">
+      <div class="bet-label">مبلغ الرهان</div>
+      <input class="bet-input" type="number" id="tradeBet" value="100" min="1" />
+      <div class="quick-bets">
+        <button class="quick-bet" onclick="setBet('trade',100)">$100</button>
+        <button class="quick-bet" onclick="setBet('trade',500)">$500</button>
+        <button class="quick-bet" onclick="setBet('trade',1000)">$1K</button>
+        <button class="quick-bet" onclick="setAll('trade')">الكل</button>
+      </div>
+      <div class="trade-btns" style="margin-top:12px">
+        <button class="trade-up" onclick="placeTrade('up')" id="tradeUpBtn">📈 ارتفاع</button>
+        <button class="trade-down" onclick="placeTrade('down')" id="tradeDownBtn">📉 هبوط</button>
+      </div>
+    </div>
+
+    <div id="tradeResult" class="result-box"></div>
+  </div>
+
+  <!-- APPLE GAME -->
+  <div id="page-apple" class="page">
+    <div class="game-header">
+      <button class="back-btn" onclick="showPage('home')">← رجوع</button>
+      <span class="game-title">🍎 لعبة التفاحة</span>
+    </div>
+
+    <div class="apple-info">
+      <div class="mines-stat">
+        <div class="ms-label">ربح محتمل</div>
+        <div class="ms-val" id="applePot">$0</div>
+      </div>
+      <div class="mines-stat">
+        <div class="ms-label">تفاح مكشوف</div>
+        <div class="ms-val" id="appleFound">0</div>
+      </div>
+      <div class="mines-stat">
+        <div class="ms-label">المضاعف</div>
+        <div class="ms-val" id="appleMulti">x1.0</div>
+      </div>
+    </div>
+
+    <div class="apple-grid" id="appleGrid"></div>
+
+    <div class="bet-section">
+      <div class="bet-label">مبلغ الرهان</div>
+      <input class="bet-input" type="number" id="appleBet" value="100" min="1" />
+      <div class="quick-bets">
+        <button class="quick-bet" onclick="setBet('apple',100)">$100</button>
+        <button class="quick-bet" onclick="setBet('apple',500)">$500</button>
+        <button class="quick-bet" onclick="setBet('apple',1000)">$1K</button>
+        <button class="quick-bet" onclick="setAll('apple')">الكل</button>
+      </div>
+      <button class="play-btn" id="appleStartBtn" onclick="startApple()">🍎 إبدأ</button>
+    </div>
+
+    <div class="mines-controls">
+      <button class="cashout-btn" id="appleCashout" onclick="cashoutApple()" disabled>💰 سحب</button>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div id="page-leaderboard" class="page">
+    <div class="game-header">
+      <span class="game-title">🏆 المتصدرين</span>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-header">
+        <span>👑</span>
+        <h3>توب الأغنياء</h3>
+      </div>
+      <div id="lbList">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="page-profile" class="page">
+    <div class="profile-card">
+      <div class="profile-avatar">👤</div>
+      <div class="profile-name" id="profileName"></div>
+      <div class="profile-balance" id="profileBalance"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="s-icon">🎮</div>
+        <div class="s-val" id="statGames">0</div>
+        <div class="s-label">إجمالي الألعاب</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-icon">🏆</div>
+        <div class="s-val" id="statWins">0</div>
+        <div class="s-label">فوز</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-icon">💰</div>
+        <div class="s-val" id="statEarned">$0</div>
+        <div class="s-label">أكبر ربح</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-icon">📊</div>
+        <div class="s-val" id="statRate">0%</div>
+        <div class="s-label">نسبة الفوز</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase Compat SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyCd6mOpEJyiUSAAhmm2NbhT80MMY0UQJcc",
+  authDomain: "project-fe025bb5-b1cc-4b8f-93e.firebaseapp.com",
+  databaseURL: "https://project-fe025bb5-b1cc-4b8f-93e-default-rtdb.firebaseio.com",
+  projectId: "project-fe025bb5-b1cc-4b8f-93e",
+  storageBucket: "project-fe025bb5-b1cc-4b8f-93e.firebasestorage.app",
+  messagingSenderId: "148069353954",
+  appId: "1:148069353954:web:783adf7e8a0c796393d1bb",
+  measurementId: "G-7S075MGVWT"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ===== STATE =====
+let currentUser = null;
+let userBalance = 0;
+let userStats = { games: 0, wins: 0, maxWin: 0 };
+
+// ===== HELPERS =====
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/['"\\]/g, '\\$&');
+}
+
+function showToast(msg, color) {
+  color = color || '#FFD700';
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg || '';
+  t.style.borderColor = color;
+  t.style.color = color;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+function fmt(n) {
+  n = n || 0;
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
+  return '$' + Math.floor(n);
+}
+
+function updateBalanceUI() {
+  var el = document.getElementById('headerBalance');
+  if (el) el.textContent = fmt(userBalance);
+  var el2 = document.getElementById('profileBalance');
+  if (el2) el2.textContent = fmt(userBalance);
+}
+
+function saveUser() {
+  if (!currentUser) return Promise.reject('No user');
+  return db.ref('users/' + currentUser).update({
+    balance: userBalance,
+    stats: userStats,
+    lastSeen: Date.now()
+  });
+}
+
+function recordStat(won, amount) {
+  userStats.games = (userStats.games || 0) + 1;
+  if (won) userStats.wins = (userStats.wins || 0) + 1;
+  if (amount > (userStats.maxWin || 0)) userStats.maxWin = amount;
+  updateStatsUI();
+  return saveUser();
+}
+
+function updateStatsUI() {
+  var games = userStats.games || 0;
+  var wins = userStats.wins || 0;
+  var maxWin = userStats.maxWin || 0;
+  document.getElementById('statGames').textContent = games;
+  document.getElementById('statWins').textContent = wins;
+  document.getElementById('statEarned').textContent = fmt(maxWin);
+  var rate = games > 0 ? Math.round(wins / games * 100) : 0;
+  document.getElementById('statRate').textContent = rate + '%';
+}
+
+// ===== AUTH =====
+function switchTab(tab) {
+  var tabs = document.querySelectorAll('.auth-tab');
+  if (tabs.length >= 2) {
+    tabs[0].classList.toggle('active', tab === 'login');
+    tabs[1].classList.toggle('active', tab === 'register');
+  }
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  var msg = document.getElementById('authMsg');
+  if (msg) msg.textContent = '';
+}
+
+function login() {
+  var u = document.getElementById('loginUser').value.trim();
+  var p = document.getElementById('loginPass').value.trim();
+  var msg = document.getElementById('authMsg');
+  if (!u || !p) { msg.textContent = '⚠️ أدخل البيانات'; msg.style.color = '#ff1744'; return; }
+  if (!db) { msg.textContent = '❌ لا يوجد اتصال بالإنترنت.'; msg.style.color = '#ff1744'; return; }
+  
+  db.ref('users/' + u).once('value').then(function(snap) {
+    if (!snap.exists()) { 
+      msg.textContent = '❌ المستخدم غير موجود'; 
+      msg.style.color = '#ff1744'; 
+      return; 
+    }
+    var data = snap.val();
+    if (!data || data.password !== p) { 
+      msg.textContent = '❌ كلمة المرور خاطئة'; 
+      msg.style.color = '#ff1744'; 
+      return; 
+    }
+    currentUser = u;
+    userBalance = data.balance || 0;
+    userStats = data.stats || { games: 0, wins: 0, maxWin: 0 };
+    enterApp();
+  }).catch(function(e) {
+    msg.textContent = '❌ خطأ في الاتصال: ' + e.message;
+    msg.style.color = '#ff1744';
+  });
+}
+
+function register() {
+  var u = document.getElementById('regUser').value.trim();
+  var p = document.getElementById('regPass').value.trim();
+  var msg = document.getElementById('authMsg');
+  if (!u || !p) { msg.textContent = '⚠️ أدخل البيانات'; msg.style.color = '#ff1744'; return; }
+  if (u.length < 3) { msg.textContent = '⚠️ الاسم 3 حروف على الأقل'; msg.style.color = '#ff1744'; return; }
+  
+  db.ref('users/' + u).once('value').then(function(snap) {
+    if (snap.exists()) { 
+      msg.textContent = '❌ الاسم مستخدم'; 
+      msg.style.color = '#ff1744'; 
+      return; 
+    }
+    return db.ref('users/' + u).set({
+      username: u, 
+      password: p,
+      balance: 0,
+      stats: { games: 0, wins: 0, maxWin: 0 },
+      createdAt: Date.now()
+    }).then(function() {
+      msg.textContent = '✅ تم إنشاء الحساب!';
+      msg.style.color = '#00e676';
+      currentUser = u; 
+      userBalance = 0;
+      userStats = { games: 0, wins: 0, maxWin: 0 };
+      setTimeout(enterApp, 1000);
+    });
+  }).catch(function(e) {
+    msg.textContent = '❌ خطأ: ' + e.message;
+    msg.style.color = '#ff1744';
+  });
+}
+
+function enterApp() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('headerUsername').textContent = '👤 ' + currentUser;
+  document.getElementById('profileName').textContent = currentUser;
+  document.getElementById('dicePlayerName').textContent = currentUser;
+  updateBalanceUI();
+  updateStatsUI();
+  loadLeaderboard();
+  initTradeChart();
+  checkBroadcasts();
+}
+
+function logout() {
+  currentUser = null; 
+  userBalance = 0;
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ===== NAV =====
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  var target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+  var navBtns = document.querySelectorAll('.nav-btn');
+  var pageIdx = ['home','dice','mines','chicken','diamond','trade','apple','leaderboard','profile'];
+  var idx = pageIdx.indexOf(page);
+  if (idx >= 0 && navBtns[idx]) navBtns[idx].classList.add('active');
+  if (page === 'leaderboard') loadLeaderboard();
+}
+
+// ===== BET HELPERS =====
+function setBet(game, amt) {
+  var el = document.getElementById(game + 'Bet');
+  if (el) el.value = Math.min(amt, userBalance);
+}
+function setHalf(game) {
+  var el = document.getElementById(game + 'Bet');
+  if (el) el.value = Math.floor(userBalance / 2);
+}
+function setAll(game) {
+  var el = document.getElementById(game + 'Bet');
+  if (el) el.value = userBalance;
+}
+function getBet(game) {
+  var el = document.getElementById(game + 'Bet');
+  if (!el) return null;
+  var v = parseInt(el.value) || 0;
+  if (v <= 0) { showToast('❌ أدخل مبلغ صحيح', '#ff1744'); return null; }
+  if (v > userBalance) { showToast('❌ رصيدك غير كافي!', '#ff1744'); return null; }
+  return v;
+}
+
+// ===== DICE =====
+function playDice() {
+  if (userBalance <= 0) { showToast('❌ رصيدك صفر! اطلب من الأدمن', '#ff1744'); return; }
+  var bet = getBet('dice');
+  if (!bet) return;
+  var btn = document.getElementById('dicePlayBtn');
+  btn.disabled = true;
+  document.getElementById('diceP1Num').textContent = '-';
+  document.getElementById('diceP2Num').textContent = '-';
+  document.getElementById('diceStatus').textContent = 'يتم الرمي...';
+  document.getElementById('diceResult').style.display = 'none';
+  var faces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+  var i = 0;
+  var anim = setInterval(function() {
+    document.getElementById('diceP1').textContent = faces[Math.floor(Math.random()*6)];
+    document.getElementById('diceP2').textContent = faces[Math.floor(Math.random()*6)];
+    i++;
+    if (i > 10) clearInterval(anim);
+  }, 80);
+  setTimeout(function() {
+    var p1 = Math.floor(Math.random()*6)+1;
+    var p2 = Math.floor(Math.random()*6)+1;
+    document.getElementById('diceP1').textContent = faces[p1-1];
+    document.getElementById('diceP2').textContent = faces[p2-1];
+    document.getElementById('diceP1Num').textContent = p1;
+    document.getElementById('diceP2Num').textContent = p2;
+    var res = document.getElementById('diceResult');
+    res.style.display = 'block';
+    if (p1 > p2) {
+      userBalance += bet;
+      res.className = 'result-box result-win';
+      res.innerHTML = '<div class="result-title win-text">🎉 فزت!</div><div class="result-amount win-text">+'+fmt(bet)+'</div>';
+      document.getElementById('diceStatus').textContent = '🎉 فزت!';
+      showToast('🎉 فزت! +'+fmt(bet), '#00e676');
+      recordStat(true, bet);
+    } else if (p1 < p2) {
+      userBalance -= bet;
+      res.className = 'result-box result-lose';
+      res.innerHTML = '<div class="result-title lose-text">😞 خسرت</div><div class="result-amount lose-text">-'+fmt(bet)+'</div>';
+      document.getElementById('diceStatus').textContent = '😞 خسرت';
+      showToast('😞 خسرت -'+fmt(bet), '#ff1744');
+      recordStat(false, 0);
+    } else {
+      res.className = 'result-box';
+      res.style.border = '2px solid #7c4dff';
+      res.innerHTML = '<div class="result-title" style="color:#7c4dff">🤝 تعادل!</div>';
+    }
+    if (userBalance < 0) userBalance = 0;
+    updateBalanceUI();
+    saveUser().catch(function(e){ console.warn('Save error:', e); });
+    btn.disabled = false;
+  }, 1000);
+}
+
+// ===== MINES =====
+var minesActive = false, minesBoard = [], minesBetAmt = 0, minesSafeCount = 0;
+
+function buildMinesGrid() {
+  var grid = document.getElementById('minesGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (var i = 0; i < 25; i++) {
+    var cell = document.createElement('div');
+    cell.className = 'mine-cell';
+    cell.textContent = '?';
+    (function(idx){ cell.onclick = function(){ clickMine(idx); }; })(i);
+    grid.appendChild(cell);
+  }
+}
+
+function startMines() {
+  if (userBalance <= 0) { showToast('❌ رصيدك صفر!','#ff1744'); return; }
+  var bet = getBet('mines');
+  if (!bet) return;
+  var bombs = parseInt(document.getElementById('minesBombs').value) || 5;
+  minesBetAmt = bet; 
+  minesSafeCount = 0;
+  userBalance -= bet; 
+  updateBalanceUI();
+  minesBoard = [];
+  for (var i=0;i<25;i++) minesBoard.push('safe');
+  var placed = 0;
+  while (placed < bombs) {
+    var idx = Math.floor(Math.random()*25);
+    if (minesBoard[idx] !== 'bomb') { minesBoard[idx] = 'bomb'; placed++; }
+  }
+  buildMinesGrid();
+  minesActive = true;
+  document.getElementById('minesStartBtn').disabled = true;
+  document.getElementById('minesCashout').disabled = false;
+  document.getElementById('minesPotential').textContent = fmt(bet);
+  document.getElementById('minesSafe').textContent = '0';
+  document.getElementById('minesMulti').textContent = 'x1.0';
+}
+
+function minesMultiplier(safe, bombs) {
+  var total = 25;
+  var multi = 1;
+  for (var i=0;i<safe;i++) multi *= (total-bombs-i)/(total-i);
+  return Math.max(1, (1/multi)*0.95);
+}
+
+function clickMine(idx) {
+  if (!minesActive) return;
+  var cells = document.querySelectorAll('#minesGrid .mine-cell');
+  var cell = cells[idx];
+  if (!cell || cell.classList.contains('revealed')) return;
+  cell.classList.add('revealed');
+  if (minesBoard[idx] === 'bomb') {
+    cell.classList.add('bomb'); 
+    cell.textContent = '💣';
+    minesBoard.forEach(function(v,i){ 
+      if(v==='bomb' && cells[i]){
+        cells[i].classList.add('revealed','bomb');
+        cells[i].textContent = '💣';
+      }
+    });
+    minesActive = false;
+    document.getElementById('minesStartBtn').disabled = false;
+    document.getElementById('minesCashout').disabled = true;
+    document.getElementById('minesPotential').textContent = '$0';
+    showToast('💥 انفجرت! خسرت '+fmt(minesBetAmt),'#ff1744');
+    updateBalanceUI(); 
+    recordStat(false,0).catch(function(e){ console.warn('Save error:', e); });
+  } else {
+    cell.classList.add('safe'); 
+    cell.textContent = '✅';
+    minesSafeCount++;
+    var bombs = parseInt(document.getElementById('minesBombs').value) || 5;
+    var multi = minesMultiplier(minesSafeCount, bombs);
+    var pot = Math.floor(minesBetAmt * multi);
+    document.getElementById('minesSafe').textContent = minesSafeCount;
+    document.getElementById('minesMulti').textContent = 'x'+multi.toFixed(2);
+    document.getElementById('minesPotential').textContent = fmt(pot);
+  }
+}
+
+function cashoutMines() {
+  if (!minesActive) return;
+  var bombs = parseInt(document.getElementById('minesBombs').value) || 5;
+  var multi = minesMultiplier(minesSafeCount, bombs);
+  var win = Math.floor(minesBetAmt * multi);
+  userBalance += win; 
+  minesActive = false;
+  document.getElementById('minesStartBtn').disabled = false;
+  document.getElementById('minesCashout').disabled = true;
+  showToast('💰 سحبت '+fmt(win)+'!','#00e676');
+  updateBalanceUI(); 
+  recordStat(true, win-minesBetAmt).catch(function(e){ console.warn('Save error:', e); });
+  buildMinesGrid();
+  document.getElementById('minesPotential').textContent = '$0';
+  document.getElementById('minesSafe').textContent = '0';
+  document.getElementById('minesMulti').textContent = 'x1.0';
+}
+
+// ===== CHICKEN =====
+var chickenMults = [1.00,1.18,1.39,1.64,1.94,2.29,2.70,3.19,3.76,4.44,5.24,6.18,7.30,8.62,10.17];
+var chickenActive = false, chickenPos = -1, chickenBetAmt = 0;
+
+function buildChickenRoad() {
+  var road = document.getElementById('chickenRoad');
+  if (!road) return;
+  road.innerHTML = '';
+  chickenMults.forEach(function(m,i) {
+    var cell = document.createElement('div');
+    cell.className = 'road-cell' + (i===0?' current':'');
+    cell.id = 'cc'+i;
+    cell.innerHTML = '<div class="chicken-display">'+(i===0?'🐔':'🪨')+'</div><div class="mult">'+m+'x</div>';
+    (function(idx){ cell.onclick = function(){ stepChicken(idx); }; })(i);
+    road.appendChild(cell);
+  });
+}
+
+function startChicken() {
+  if (userBalance <= 0) { showToast('❌ رصيدك صفر!','#ff1744'); return; }
+  var bet = getBet('chicken');
+  if (!bet) return;
+  chickenBetAmt = bet;
+  userBalance -= bet; 
+  updateBalanceUI();
+  chickenPos = 0; 
+  chickenActive = true;
+  buildChickenRoad();
+  document.getElementById('chickenStartBtn').disabled = true;
+  document.getElementById('chickenCashout').disabled = false;
+  document.getElementById('chickenPot').textContent = fmt(bet * chickenMults[0]);
+}
+
+function stepChicken(idx) {
+  if (!chickenActive || idx <= chickenPos || idx > chickenPos+1) return;
+  var prev = document.getElementById('cc'+chickenPos);
+  if (prev) {
+    prev.classList.remove('current'); 
+    prev.classList.add('passed','safe');
+  }
+  // Random bomb check based on luck
+  var isBomb = Math.random() < 0.3;
+  if (isBomb) {
+    var cell = document.getElementById('cc'+idx);
+    if (cell) {
+      cell.classList.add('passed','bomb');
+      cell.innerHTML = '<div>💣</div><div class="mult">قنبلة!</div>';
+    }
+    chickenActive = false;
+    document.getElementById('chickenStartBtn').disabled = false;
+    document.getElementById('chickenCashout').disabled = true;
+    showToast('💥 انفجرت! خسرت '+fmt(chickenBetAmt),'#ff1744');
+    updateBalanceUI(); 
+    recordStat(false,0).catch(function(e){ console.warn('Save error:', e); });
+  } else {
+    chickenPos = idx;
+    var cell2 = document.getElementById('cc'+idx);
+    if (cell2) {
+      cell2.classList.add('current');
+      cell2.innerHTML = '<div class="chicken-display">🐔</div><div class="mult">'+chickenMults[idx]+'x</div>';
+    }
+    var pot = Math.floor(chickenBetAmt * chickenMults[idx]);
+    document.getElementById('chickenPot').textContent = fmt(pot);
+    if (idx === chickenMults.length-1) cashoutChicken();
+  }
+}
+
+function cashoutChicken() {
+  if (!chickenActive) return;
+  var win = Math.floor(chickenBetAmt * chickenMults[Math.max(0,chickenPos)]);
+  userBalance += win; 
+  chickenActive = false;
+  document.getElementById('chickenStartBtn').disabled = false;
+  document.getElementById('chickenCashout').disabled = true;
+  showToast('💰 سحبت '+fmt(win)+'!','#00e676');
+  updateBalanceUI(); 
+  recordStat(true, win-chickenBetAmt).catch(function(e){ console.warn('Save error:', e); });
+}
+
+// ===== DIAMOND =====
+var diaActive = false, diaBoard = [], diaBet = 0, diaFound = 0;
+
+function buildDiamondGrid() {
+  var grid = document.getElementById('diamondGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (var i=0;i<25;i++) {
+    var cell = document.createElement('div');
+    cell.className = 'mine-cell';
+    cell.textContent = '?';
+    (function(idx){ cell.onclick = function(){ clickDiamond(idx); }; })(i);
+    grid.appendChild(cell);
+  }
+}
+
+function startDiamond() {
+  if (userBalance <= 0) { showToast('❌ رصيدك صفر!','#ff1744'); return; }
+  var bet = getBet('diamond');
+  if (!bet) return;
+  diaBet = bet; 
+  diaFound = 0;
+  userBalance -= bet; 
+  updateBalanceUI();
+  diaBoard = [];
+  for (var i=0;i<25;i++) diaBoard.push('diamond');
+  var placed = 0;
+  while (placed < 5) {
+    var idx = Math.floor(Math.random()*25);
+    if (diaBoard[idx]!=='bomb'){diaBoard[idx]='bomb';placed++;}
+  }
+  buildDiamondGrid();
+  diaActive = true;
+  document.getElementById('diamondStartBtn').disabled = true;
+  document.getElementById('diamondCashout').disabled = false;
+  document.getElementById('diamondPot').textContent = fmt(bet);
+  document.getElementById('diamondFound').textContent = '0';
+  document.getElementById('diamondMulti').textContent = 'x1.0';
+}
+
+function diaMulti(found) { return Math.max(1, 1+found*0.4); }
+
+function clickDiamond(idx) {
+  if (!diaActive) return;
+  var cells = document.querySelectorAll('#diamondGrid .mine-cell');
+  var cell = cells[idx];
+  if (!cell || cell.classList.contains('revealed')) return;
+  cell.classList.add('revealed');
+  if (diaBoard[idx]==='bomb') {
+    cell.classList.add('bomb'); 
+    cell.textContent='💣';
+    diaBoard.forEach(function(v,i){if(v==='bomb' && cells[i]){
+      cells[i].classList.add('revealed','bomb');
+      cells[i].textContent='💣';
+    }});
+    diaActive=false;
+    document.getElementById('diamondStartBtn').disabled=false;
+    document.getElementById('diamondCashout').disabled=true;
+    document.getElementById('diamondPot').textContent='$0';
+    showToast('💥 قنبلة! خسرت '+fmt(diaBet),'#ff1744');
+    updateBalanceUI(); 
+    recordStat(false,0).catch(function(e){ console.warn('Save error:', e); });
+  } else {
+    cell.classList.add('safe'); 
+    cell.textContent='💎';
+    diaFound++;
+    var multi=diaMulti(diaFound);
+    var pot=Math.floor(diaBet*multi);
+    document.getElementById('diamondFound').textContent=diaFound;
+    document.getElementById('diamondMulti').textContent='x'+multi.toFixed(1);
+    document.getElementById('diamondPot').textContent=fmt(pot);
+  }
+}
+
+function cashoutDiamond() {
+  if (!diaActive) return;
+  var win=Math.floor(diaBet*diaMulti(diaFound));
+  userBalance+=win; 
+  diaActive=false;
+  document.getElementById('diamondStartBtn').disabled=false;
+  document.getElementById('diamondCashout').disabled=true;
+  showToast('💎 سحبت '+fmt(win)+'!','#00e676');
+  updateBalanceUI(); 
+  recordStat(true,win-diaBet).catch(function(e){ console.warn('Save error:', e); });
+  buildDiamondGrid();
+}
+
+// ===== TRADING =====
+var tradeData = [], tradeCurrent = 100, tradeInterval = null;
+
+function initTradeChart() {
+  tradeCurrent = 80 + Math.random()*40;
+  tradeData = [];
+  for (var i=0;i<30;i++) {
+    tradeCurrent += (Math.random()-0.5)*5;
+    tradeCurrent = Math.max(10, tradeCurrent);
+    tradeData.push(tradeCurrent);
+  }
+  drawTradeChart();
+  document.getElementById('tradePrice').textContent = '$'+tradeCurrent.toFixed(2);
+  clearInterval(tradeInterval);
+  tradeInterval = setInterval(function(){
+    tradeCurrent += (Math.random()-0.5)*3;
+    tradeCurrent = Math.max(10,tradeCurrent);
+    tradeData.push(tradeCurrent);
+    if(tradeData.length>50) tradeData.shift();
+    drawTradeChart();
+    var priceEl = document.getElementById('tradePrice');
+    if (priceEl) priceEl.textContent = '$'+tradeCurrent.toFixed(2);
+  },800);
+}
+
+function drawTradeChart() {
+  var canvas = document.getElementById('tradeChart');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width || 300;
+  canvas.height = rect.height || 180;
+  if (tradeData.length < 2) return;
+  var w=canvas.width, h=canvas.height;
+  ctx.clearRect(0,0,w,h);
+  var minV=Math.min.apply(null,tradeData)*0.95;
+  var maxV=Math.max.apply(null,tradeData)*1.05;
+  if (minV === maxV) { minV = minV * 0.9; maxV = maxV * 1.1; }
+  var toX=function(i){return(i/(tradeData.length-1))*w;};
+  var toY=function(v){return h-((v-minV)/(maxV-minV))*h;};
+  ctx.strokeStyle='rgba(255,255,255,0.05)'; 
+  ctx.lineWidth=1;
+  for(var i=0;i<5;i++){ctx.beginPath();ctx.moveTo(0,(h/4)*i);ctx.lineTo(w,(h/4)*i);ctx.stroke();}
+  var grad=ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,'rgba(0,176,255,0.3)');
+  grad.addColorStop(1,'rgba(0,176,255,0)');
+  ctx.beginPath();
+  ctx.moveTo(toX(0),toY(tradeData[0]));
+  for(var j=1;j<tradeData.length;j++) ctx.lineTo(toX(j),toY(tradeData[j]));
+  ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+  ctx.beginPath(); 
+  ctx.strokeStyle='#00b0ff'; 
+  ctx.lineWidth=2;
+  ctx.moveTo(toX(0),toY(tradeData[0]));
+  for(var k=1;k<tradeData.length;k++) ctx.lineTo(toX(k),toY(tradeData[k]));
+  ctx.stroke();
+  ctx.beginPath(); 
+  ctx.arc(toX(tradeData.length-1),toY(tradeData[tradeData.length-1]),4,0,Math.PI*2);
+  ctx.fillStyle='#00b0ff'; 
+  ctx.fill();
+}
+
+function placeTrade(dir) {
+  if (userBalance <= 0) { showToast('❌ رصيدك صفر!','#ff1744'); return; }
+  var bet = getBet('trade');
+  if (!bet) return;
+  document.getElementById('tradeUpBtn').disabled=true;
+  document.getElementById('tradeDownBtn').disabled=true;
+  var startPrice = tradeCurrent;
+  showToast('⏳ انتظر 5 ثواني...','#00b0ff');
+  setTimeout(function() {
+    var endPrice = tradeCurrent;
+    var pct = ((endPrice-startPrice)/startPrice*100).toFixed(1);
+    var won = (dir==='up' && endPrice>startPrice)||(dir==='down' && endPrice<startPrice);
+    var result = document.getElementById('tradeResult');
+    if (result) {
+      result.style.display='block';
+      if (won) {
+        var profit = Math.floor(bet*1.1);
+        userBalance += profit;
+        result.className='result-box result-win';
+        result.innerHTML='<div class="result-title win-text">🎉 توقعك صح!</div><div style="color:#aaa;font-size:13px">'+pct+'%</div><div class="result-amount win-text">+'+fmt(profit)+'</div>';
+        showToast('📈 ربحت! +'+fmt(profit),'#00e676');
+        recordStat(true,profit).catch(function(e){ console.warn('Save error:', e); });
+      } else {
+        userBalance -= bet;
+        result.className='result-box result-lose';
+        result.innerHTML='<div class="result-title lose-text">😞 توقعك غلط</div><div style="color:#aaa;font-size:13px">'+pct+'%</div><div class="result-amount lose-text">-'+fmt(bet)+'</div>';
+        showToast('📉 خسرت -'+fmt(bet),'#ff1744');
+        recordStat(false,0).catch(function(e){ console.warn('Save error:', e); });
+      }
+    }
+    if(userBalance<0) userBalance=0;
+    updateBalanceUI(); 
+    saveUser().catch(function(e){ console.warn('Save error:', e); });
+    document.getElementById('tradeUpBtn').disabled=false;
+    document.getElementById('tradeDownBtn').disabled=false;
+  },5000);
+}
+
+// ===== APPLE =====
+var appleActive=false, appleBoard=[], appleBet=0, appleFound=0;
+
+function buildAppleGrid() {
+  var grid=document.getElementById('appleGrid');
+  if (!grid) return;
+  grid.innerHTML='';
+  for(var i=0;i<16;i++){
+    var cell=document.createElement('div');
+    cell.className='apple-cell';
+    cell.textContent='?';
+    (function(idx){cell.onclick=function(){clickApple(idx);};})(i);
+    grid.appendChild(cell);
+  }
+}
+
+function startApple() {
+  if(userBalance<=0){showToast('❌ رصيدك صفر!','#ff1744');return;}
+  var bet=getBet('apple');
+  if(!bet) return;
+  appleBet=bet; 
+  appleFound=0;
+  userBalance-=bet; 
+  updateBalanceUI();
+  appleBoard=[];
+  for(var i=0;i<16;i++) appleBoard.push('apple');
+  var placed=0;
+  while(placed<4){
+    var idx=Math.floor(Math.random()*16);
+    if(appleBoard[idx]!=='bomb'){appleBoard[idx]='bomb';placed++;}
+  }
+  buildAppleGrid();
+  appleActive=true;
+  document.getElementById('appleStartBtn').disabled=true;
+  document.getElementById('appleCashout').disabled=false;
+  document.getElementById('applePot').textContent=fmt(bet);
+  document.getElementById('appleFound').textContent='0';
+  document.getElementById('appleMulti').textContent='x1.0';
+}
+
+function appleMulti(found){return Math.max(1,1+found*0.35);}
+
+function clickApple(idx) {
+  if(!appleActive) return;
+  var cells=document.querySelectorAll('#appleGrid .apple-cell');
+  var cell=cells[idx];
+  if(!cell || cell.classList.contains('revealed')) return;
+  cell.classList.add('revealed');
+  if(appleBoard[idx]==='bomb'){
+    cell.classList.add('bomb-a'); 
+    cell.textContent='💣';
+    appleBoard.forEach(function(v,i){if(v==='bomb' && cells[i]){
+      cells[i].classList.add('revealed','bomb-a');
+      cells[i].textContent='💣';
+    }});
+    appleActive=false;
+    document.getElementById('appleStartBtn').disabled=false;
+    document.getElementById('appleCashout').disabled=true;
+    document.getElementById('applePot').textContent='$0';
+    showToast('💥 قنبلة! خسرت '+fmt(appleBet),'#ff1744');
+    updateBalanceUI(); 
+    recordStat(false,0).catch(function(e){ console.warn('Save error:', e); });
+  } else {
+    cell.classList.add('apple'); 
+    cell.textContent='🍎';
+    appleFound++;
+    var multi=appleMulti(appleFound);
+    var pot=Math.floor(appleBet*multi);
+    document.getElementById('appleFound').textContent=appleFound;
+    document.getElementById('appleMulti').textContent='x'+multi.toFixed(2);
+    document.getElementById('applePot').textContent=fmt(pot);
+    if(appleFound===12) cashoutApple();
+  }
+}
+
+function cashoutApple() {
+  if(!appleActive) return;
+  var win=Math.floor(appleBet*appleMulti(appleFound));
+  userBalance+=win; 
+  appleActive=false;
+  document.getElementById('appleStartBtn').disabled=false;
+  document.getElementById('appleCashout').disabled=true;
+  showToast('🍎 سحبت '+fmt(win)+'!','#00e676');
+  updateBalanceUI(); 
+  recordStat(true,win-appleBet).catch(function(e){ console.warn('Save error:', e); });
+  buildAppleGrid();
+}
+
+// ===== LEADERBOARD =====
+function loadLeaderboard() {
+  db.ref('users').once('value').then(function(snap) {
+    var list=document.getElementById('lbList');
+    if(!snap.exists()){
+      if(list) list.innerHTML='<div style="padding:20px;text-align:center;color:#888">لا يوجد لاعبين</div>';
+      return;
+    }
+    var users=[];
+    snap.forEach(function(child){
+      var d=child.val();
+      if (d && typeof d === 'object') {
+        users.push({name:child.key, balance:d.balance||0});
+      }
+    });
+    users.sort(function(a,b){return b.balance-a.balance;});
+    var medals=['🥇','🥈','🥉'];
+    if(list) {
+      list.innerHTML=users.slice(0,10).map(function(u,i){
+        return '<div class="lb-row"><div class="lb-rank">'+(medals[i]||(i+1))+'</div><div class="lb-name">👤 '+u.name+'</div><div class="lb-bal">'+fmt(u.balance)+'</div></div>';
+      }).join('');
+    }
+  }).catch(function(e) {
+    var list=document.getElementById('lbList');
+    if(list) list.innerHTML='<div class="empty-msg">❌ خطأ: '+e.message+'</div>';
+  });
+}
+
+// ===== BROADCASTS =====
+function checkBroadcasts() {
+  db.ref('broadcasts').limitToLast(1).once('value').then(function(snap) {
+    if (!snap.exists()) return;
+    snap.forEach(function(child) {
+      var b = child.val();
+      if (b && Date.now() - (b.time || 0) < 60000) {
+        showToast('📢 ' + (b.message || ''), '#7c4dff');
+      }
+    });
+  }).catch(function(e) {
+    console.warn('Broadcast check error:', e);
+  });
+}
+
+// ===== INIT =====
+// Build initial grids
+buildMinesGrid();
+buildDiamondGrid();
+buildAppleGrid();
+buildChickenRoad();
+
+// Check Firebase connection
+db.ref('.info/connected').on('value', function(snap) {
+  if (snap.val() === true) {
+    console.log('🔥 Firebase connected');
+  } else {
+    console.warn('⚠️ Firebase disconnected');
+  }
+});
+</script>
+</body>
+</html>
